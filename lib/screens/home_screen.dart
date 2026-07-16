@@ -16,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   bool shouldThrowDuringBuild = false;
   bool _showOverflow = false;
+  bool _showLayoutAssertion = false;
   String _buildNumber = '—';
   final AppService _appService = AppService();
   late final AnimationController _animationController;
@@ -90,6 +91,12 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
+  void _toggleLayoutAssertion() {
+    setState(() {
+      _showLayoutAssertion = !_showLayoutAssertion;
+    });
+  }
+
   Future<void> _throwFromHttpGet() async {
     try {
       final response = await http.get(Uri.parse('https://this.invalid.domain.test/error'));
@@ -157,6 +164,21 @@ class _HomeScreenState extends State<HomeScreen>
                       const Text('Item C - very long label'),
                     ],
                   ),
+                ),
+              ),
+            TextButton(
+              onPressed: _toggleLayoutAssertion,
+              child: const Text('Toggle layout assertion (unbounded height)'),
+            ),
+            if (_showLayoutAssertion)
+              SizedBox(
+                height: 80,
+                child: Column(
+                  children: [
+                    ListView(
+                      children: const [Text('item 1'), Text('item 2')],
+                    ),
+                  ],
                 ),
               ),
             TextButton(
