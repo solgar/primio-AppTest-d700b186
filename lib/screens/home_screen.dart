@@ -171,15 +171,20 @@ class _HomeScreenState extends State<HomeScreen>
               child: const Text('Toggle layout assertion (unbounded height)'),
             ),
             if (_showLayoutAssertion)
-              SizedBox(
-                height: 80,
-                child: Column(
-                  children: [
-                    ListView(
-                      children: const [Text('item 1'), Text('item 2')],
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  // Intentionally pass unconstrained height to ListView to trigger:
+                  // "The following assertion was thrown during performResize():
+                  //  Vertical viewport was given unbounded height."
+                  return UnconstrainedBox(
+                    child: SizedBox(
+                      width: constraints.maxWidth,
+                      child: ListView(
+                        children: const [Text('item 1'), Text('item 2')],
+                      ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             TextButton(
               onPressed: _toggleThrowDuringBuild,
